@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include "main.h"
 #include "sampgdk.h"
 
 #include <boost/unordered_map.hpp>
@@ -24,6 +23,23 @@
 #include <algorithm>
 #include <queue>
 #include <string>
+
+
+#define PLUGIN_VERSION "1.0"
+
+#define PVAR_TYPE_NONE (0)
+#define PVAR_TYPE_INT (1)
+#define PVAR_TYPE_STRING (2)
+#define PVAR_TYPE_FLOAT (3)
+
+typedef boost::unordered_map<std::string, boost::tuple<int, boost::variant<int, std::string, float> > > DataMap;
+typedef boost::unordered_map<int, boost::tuple<int, std::queue<int> > > IndexMap;
+typedef boost::unordered_map<int, DataMap> MainMap;
+
+typedef void (*logprintf_t)(const char*, ...);
+
+extern logprintf_t logprintf;
+extern void* pAMXFunctions;
 
 IndexMap indexMap;
 MainMap mainMap;
@@ -49,7 +65,7 @@ std::string getString(AMX *amx, cell param, bool toLower)
 
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports()
 {
-	return sampgdk::Supports() | SUPPORTS_AMX_NATIVES;
+	return sampgdk::Supports() | SUPPORTS_VERSION | SUPPORTS_AMX_NATIVES;
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData)
@@ -88,7 +104,6 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerDisconnect(int playerid, int reason)
 
 static cell AMX_NATIVE_CALL n_PVarSetInt(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(3, "PVarSetInt");
 	std::string name = getString(amx, params[2], true);
 	int value = static_cast<int>(params[3]), playerid = static_cast<int>(params[1]), index = 0;
 	MainMap::iterator i = mainMap.find(playerid);
@@ -124,7 +139,6 @@ static cell AMX_NATIVE_CALL n_PVarSetInt(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL n_PVarGetInt(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(2, "PVarGetInt");
 	std::string name = getString(amx, params[2], true);
 	int playerid = static_cast<int>(params[1]);
 	MainMap::iterator i = mainMap.find(playerid);
@@ -145,7 +159,6 @@ static cell AMX_NATIVE_CALL n_PVarGetInt(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL n_PVarSetString(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(3, "PVarSetString");
 	std::string name = getString(amx, params[2], true), value = getString(amx, params[3], false);
 	int playerid = static_cast<int>(params[1]), index = 0;
 	MainMap::iterator i = mainMap.find(playerid);
@@ -181,7 +194,6 @@ static cell AMX_NATIVE_CALL n_PVarSetString(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL n_PVarGetString(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(4, "PVarGetString");
 	std::string name = getString(amx, params[2], true);
 	int size = static_cast<int>(params[4]), playerid = static_cast<int>(params[1]);
 	MainMap::iterator i = mainMap.find(playerid);
@@ -204,7 +216,6 @@ static cell AMX_NATIVE_CALL n_PVarGetString(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL n_PVarSetFloat(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(3, "PVarSetFloat");
 	std::string name = getString(amx, params[2], true);
 	float value = amx_ctof(params[3]);
 	int playerid = static_cast<int>(params[1]), index = 0;
@@ -241,7 +252,6 @@ static cell AMX_NATIVE_CALL n_PVarSetFloat(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL n_PVarGetFloat(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(2, "PVarGetFloat");
 	std::string name = getString(amx, params[2], true);
 	int playerid = static_cast<int>(params[1]);
 	MainMap::iterator i = mainMap.find(playerid);
@@ -262,7 +272,6 @@ static cell AMX_NATIVE_CALL n_PVarGetFloat(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL n_PVarDelete(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(2, "PVarDelete");
 	std::string name = getString(amx, params[2], true);
 	int playerid = static_cast<int>(params[1]);
 	MainMap::iterator i = mainMap.find(playerid);
@@ -290,7 +299,6 @@ static cell AMX_NATIVE_CALL n_PVarDelete(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL n_PVarsGetUpperIndex(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(1, "PVarsGetUpperIndex");
 	int playerid = static_cast<int>(params[1]), index = 0;
 	IndexMap::iterator k = indexMap.find(playerid);
 	if (k != indexMap.end())
@@ -318,7 +326,6 @@ static cell AMX_NATIVE_CALL n_PVarsGetUpperIndex(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL n_PVarGetNameAtIndex(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(4, "PVarGetNameAtIndex");
 	int index = static_cast<int>(params[2]), size = static_cast<int>(params[4]), playerid = static_cast<int>(params[1]);
 	MainMap::iterator i = mainMap.find(playerid);
 	if (i != mainMap.end())
@@ -339,7 +346,6 @@ static cell AMX_NATIVE_CALL n_PVarGetNameAtIndex(AMX *amx, cell *params)
 
 static cell AMX_NATIVE_CALL n_PVarGetType(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(2, "PVarGetType");
 	std::string name = getString(amx, params[2], true);
 	int playerid = static_cast<int>(params[1]);
 	MainMap::iterator i = mainMap.find(playerid);

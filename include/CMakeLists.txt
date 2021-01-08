@@ -16,7 +16,6 @@ add_definitions(-DSAMPGDK_AMALGAMATION)
 add_samp_plugin(pvar
   amxplugin.cpp
   main.cpp
-  main.h
   pvar.def
   sampgdk.c
   sampgdk.h
