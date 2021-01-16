@@ -1,7 +1,6 @@
 {
 	"user": "rizlone",
 	"repo": "samp-pvar-plugin",
-	"dependencies": ["sampctl/samp-stdlib"],
 	"resources": [
 		{
             "name": "samp-pvar-plugin.zip",
