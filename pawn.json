@@ -1,4 +1,21 @@
 {
 	"user": "rizlone",
 	"repo": "samp-pvar-plugin",
+	"dependencies": ["sampctl/samp-stdlib"],
+	"resources": [
+		{
+			"name": "samp-pvar-plugin.zip",
+			"platform": "windows",
+			"archive": true,
+			"includes": ["pawno/include"],
+			"plugins": ["plugins/pvar.dll"]
+		},
+		{
+			"name": "samp-pvar-plugin.zip",
+			"platform": "linux",
+			"archive": true,
+			"includes": ["pawno/include"],
+			"plugins": ["plugins/pvar.so"]            
+		}
+	],    
 }
