@@ -17,5 +17,5 @@
 			"includes": ["pawno/include"],
 			"plugins": ["plugins/pvar.so"]            
 		}
-	],    
+	] 
 }
