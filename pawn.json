@@ -17,5 +17,8 @@
 			"includes": ["pawno/include"],
 			"plugins": ["plugins/pvar.so"]            
 		}
-	]  
+	],
+	"runtime": {
+        "plugins": ["rizlone/samp-pvar-plugin"]
+	}
 }
