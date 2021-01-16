@@ -1,6 +1,16 @@
 SA-MP PVar Plugin
 ================
 
+[![sampctl](https://img.shields.io/badge/sampctl-PVar-2f2f2f.svg?style=for-the-badge)](https://github.com/rizlone/samp-pvar-plugin)
+
+## Installation
+
+Simply install to your project:
+
+```bash
+sampctl package install rizlone/samp-pvar-plugin
+```
+
 This plugin is an extension to the per-player variable (PVar) system
 
 - Much faster execution time
